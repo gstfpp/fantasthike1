@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}
+Search
+{% endblock %}
+{% block body %}
+     <header class="sechead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h2 class="text-white mb-4">Welcome to {{province}}!</h2>
+                        {% if number_of_experiences==0 %}
+                            <h6 style="color:white">
+                                We are sorry, unfortunately there is no-one yet here. Do you know someone that would enjoy joining us? Send an email, and suggest us to your friend!
+                                <br/><br/>
+                                 {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                <ul class="flashes">
+                                     {% for category, message in messages %}
+                                         {% if category=="success" %}
+                                         <span class="{{ category }}" style="color:green">{{ message }}</span>
+                                         {% endif %}
+                                     {% endfor %}
+                                </ul>
+                                    {% endif %}
+                                {% endwith %}
+                                <form method="POST">
+                                    {{ form.csrf_token }}
+                                    {{ form.email(placeholder="Write here the email") }} <br/><br/>
+                                    {{ form.submit(class="btn btn-lg alert-white") }}
+                                    {{ form.hidden_tag() }}
+                                </form>
+                            </h6>
+                            <div style="background-color: black">
+                            <h6 style="color:white">Check this other provinces:
+                            {% for p in province_served %}
+                                <a href="/search/{{ p }}">{{ p }}</a>
+                            {% endfor %}
+                            </h6>
+                            </div>
+                        {% elif number_of_experiences==1 %}
+                            <h6 style="color:white">There is 1 experience in {{province}} </h6>
+                        {% else %}
+                            <h6 style="color:white"> There are {{ number_of_experiences }} experiences in {{ province }}</h6>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+     </header>
+    {% if number_of_experiences!=0 %}
+    <section class="profilesearch">
+        <br/>
+        <div class="container px-3 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    {% for e in exp %}
+                        {% if e.user.premium == 1 and (e.end_date >= today)%}
+                            <a class="profilecardpremium" href="{{ url_for('profile',username=e.user.username) }}#{{ e.id }}">
+                                <img src="../static/assets/profilephoto/{{ e.user.id }}/{{ e.user.id }}.jpg" class="profilephotoround">
+                                <h5>{{ e.user.name+" "+e.user.surname }} &#9733;</h5>
+                                <h7>This guide has a premium account</h7>
+                                <h6>{{ e.title }}</h6>
+                                <h4 style="font-style: italic"><i class="fas fa-map-marker-alt"></i> {{ e.place }}</h4>
+                                {% if e.user.professional==1 %}<p class="profiletitle">Professional guide</p>{% endif %}
+                                {% if e.end_date==today %}<p class="btn-danger">This experience end today</p>{% endif %}
+                                {% if e.start_date>today %}<h9 class="fst-italic"> Starts from {{ e.start_date.strftime("%d %B %Y") }} </h9>{% endif %}
+                                <div style="font-size:0.5rem; overflow: hidden; text-overflow: ellipsis; max-height: 6rem">{{ e.description }}</div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                            <a class="profilecardpremium">
+                                <img src="../static/assets/img/shoes.jpg" class="profilephotoround" style="height: 10rem; width: 10rem">
+                                <h5>Trekking Shoes</h5>
+                                <h6>MasterShoes!</h6>
+                                <div style="font-size:0.5rem; overflow: hidden; text-overflow: ellipsis; max-height: 6rem">Mastershoes has designed the GTX shoe for walking in the mountains, in all weathers, and on challenging trails. Suited to intensive users. The GTX is a resistant and protective hiking shoe. It is perfect for mountain walking thanks to its good grip and stability.</div>
+                            </a>
+                    {% for e in exp %}
+                        {% if e.user.premium == 0 and (e.end_date >= today)%}
+                            <a class="profilecard" href="{{ url_for('profile',username=e.user.username) }}#{{ e.id }}">
+                                <img src="../static/assets/profilephoto/{{ e.user.id }}/{{ e.user.id }}.jpg" class="profilephotoround">
+                                <h5>{{ e.user.name+" "+e.user.surname }}</h5>
+                                <h6>{{ e.title }}</h6>
+                                <h4 style="font-style: italic"><i class="fas fa-map-marker-alt"></i> {{ e.place }}</h4>
+                                {% if e.user.professional==1 %}<p class="profiletitle">Professional guide</p>{% endif %}
+                                {% if e.end_date==today %}<p class="btn-danger">This experience end today</p>{% endif %}
+                                {% if e.start_date>today %}<h9 class="fst-italic"> Starts from {{ e.start_date.strftime("%d %B %Y") }} </h9>{% endif %}
+                                <div style="font-size:0.5rem; overflow: hidden; text-overflow: ellipsis; max-height: 6rem">{{ e.description }}</div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
+

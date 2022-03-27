@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}
+Profile
+{% endblock %}
+{% block body %}
+
+<header class="mastheadprofile">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for category,message in messages %}
+                            {% if category=='successcreated' %}
+                                <h1 style="color:white; font-weight: bold; font-family: Garamond; text-align: center ">{{ message }}</h1>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+    <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center profilerectangle" style="margin-top:1px">
+        <div class="col-xl-8 w-50">
+                <img class="profilephoto" style="max-width: 90%" src="../static/assets/profilephoto/{{ userdata.id }}/{{ userdata.id }}.jpg"/>
+        </div>
+        <div class="col-xl-4 col-lg-5 w-50 m-5">
+            <div class="text-center">
+                <div class="h-10"><h1>{{ userdata.name+" "+userdata.surname }}</h1></div>
+                <div class="h-90">
+                    <h6>
+                        {% if userdata.professional==1 %}
+                        Professional
+                            {% if userdata.guide==1 %}
+                        Guide
+                            {% endif %}
+                        {% endif %}
+                    </h6>
+                    <h7>{{ username }}</h7><br/>
+                    <h7>Languages:
+                        {% for l in lang %}
+                            <img class="navbar-toggler-icon" src="../static/assets/img/{{ l.lang }}.png"/>
+                        {% endfor %}
+                    </h7><br/>
+                    <a href="mailto:{{ userdata.email }}"><h7><i class="fas fa-envelope"></i> {{ userdata.email }}</h7></a><br/>
+                    <h6><i class="fas fa-map-pin"></i> {{ userdata.province }}</h6><br/>
+                    <h6>{{ userdata.bio }}</h6><br/>
+                    {% if me %}
+                        <a  class="btn" href="{{ url_for('editdata') }}">Edit data  <i class="fas fa-edit"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% if me == True and userdata.guide==1 %}
+    <div class="formrectangle container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center" id="experience">
+        <h2> Add an experience you want to guide</h2>
+             <form method="post" enctype='multipart/form-data'>
+                 {{ formexp.csrf_token }}
+                 Province <br/>{{ formexp.province() }}<br/>
+                 Place <br/> {{ formexp.place() }} <br/>
+                 Title <br/> {{ formexp.title() }} <br/>
+                 Description of the experience: <br/>
+                     {{ formexp.description() }}<br/>
+                 When do you want start guiding this experience?<br/>
+                    {{ formexp.start_date() }}<br/>
+                 In order to avoid having experiences not guided anymore, we require an end-date of the experience that can be maximum a year from now<br/>
+                    {{ formexp.end_date() }}<br/>
+                 Choose a price or a rough price<br/>
+                    {{ formexp.price() }} <br/>
+                 {{ formexp.submit(class="btn btn-primary btn-lg align-content-center m-2") }}<br/>
+                 {{ formexp.hidden_tag() }}
+             </form>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for category,message in messages %}
+                            {% if category=="experience" %}
+                                <div style="color:orange">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+    </div>
+{% endif %}
+
+{% if me == False %}
+    <div class="bigrectangle container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+        <div class="m-4" id="feedbackform">
+            <h6>If you shared an experience with {{ userdata.name }}, give us a feedback!</h6>
+             <form method="post" enctype='multipart/form-data'>
+                 {{ form.csrf_token }}
+                     {{ form.star.label() }}
+                     {{ form.star(placeholder="insert a number between 1 and 5",pattern="[1-5]") }}/5<br/>
+                     Write something on your experience! <br/>
+                     {{ form.review(placeholder="Please be kind ;)") }}<br/>
+                     {{ form.submit(class="btn btn-primary btn-lg align-content-center") }}
+                 {{ form.hidden_tag() }}
+             </form>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category=="feedback" %}
+                                <div style="color:orange">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+        </div>
+    </div>
+{% endif %}
+</header>
+<div class="profiledetails p-2">
+    {%  if userdata.guide==1 %}
+    <h1 style="color:white" id="experiencebody">Experiences Guided</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category=="experiencedeleted" %}
+                                <div style="color:orange" >{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+        {% endwith %}
+        {% if experience.count()==0 %}
+                <h6 style="color:white; font-style:italic">There aren't experiences guided by {{ userdata.name }} yet. Please come back later!</h6>
+        {% endif %}
+        {% for exp in experience %}
+            <div class="tourcard" style="background-color: {% if exp.end_date<today %} lightcoral {% endif %}" id="{{ exp.id }}">
+                {% if exp.end_date<today %} <h5 class="fst-italic">This is a past Experience</h5> {% endif %}
+                <h1 style="font-family: Garamond ">{{ exp.title }}</h1>
+                <h4 style="font-family: Garamond"><i class="fas fa-map-marker-alt"></i> {{ exp.place }}, {{ exp.provinceExp }}</h4>
+                {% if exp.start_date>today %} <h8 class="fst-italic">This Experience is guided only from {{ exp.start_date.strftime("%d %B %Y") }}</h8> <br/>{% endif %}
+                <h8> This experience will be guided until {{ exp.end_date.strftime("%d %B %Y") }}</h8> <br/>
+                {% if exp.price==0 %}
+                    <h8 class="fst-italic">Free</h8>
+                {% else %}
+                    <h8 class="fst-italic">around ${{ exp.price }}</h8>
+                {% endif %}
+                <hr><hr>
+                <h6>{{ exp.description }}</h6>
+                {% if me == True %}
+                <form method="post" class="p-2" enctype='multipart/form-data'>
+                {{ formdelete.csrf_token }}
+                     {{ formdelete.expid(value=exp.id) }}<br/>
+                     {{ formdelete.submit(class="btn-danger") }}
+                {{ formdelete.hidden_tag() }}
+                </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h1 style="color:white">Feedback</h1>
+        {% if num_fr==0 %}
+                <h6 style="color:white; font-style:italic">There aren't feedbacks yet, be the first!</h6>
+        {% endif %}
+    <div style="  display: flex; align-items: flex-start;justify-content: space-between;padding: 2rem;margin: auto;">
+        {% for f in feedback_received %}
+            <div class="feedbackrectangle container my-1 px-3">
+                <h6>
+                    {% for i in range(f.star) %}<img class="navbar-toggler-icon" src="../static/assets/img/climb.png"}}/>{% endfor %}
+                    {% for i in range(5-f.star) %}<img class="navbar-toggler-icon" src="../static/assets/img/climbbw.png"}}/>{% endfor %}
+                        <br/> <h7>{{ f.date.strftime("%d %B %Y") }}</h7>
+                    <br/><h6><a href="{{ url_for('profile', username=f.userdata.username) }}">{{ f.userdata.username }}</a> said:</h6>
+                        <h6>{{ f.review }}</h6>
+                </h6>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

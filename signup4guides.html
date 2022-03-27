@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block body %}
+    <header class="mastheadlong">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="bigrectangle">
+                    <br/>
+                    <h3>Sign Up and start improving your passion!</h3><br/>
+                    <h7> Please note that fields with <sup>*</sup> are mandatory</h7>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category=="error" %}
+                                <div style="color:orange">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    <form method="post" enctype='multipart/form-data'>
+                        {{ form.csrf_token }}
+                        <br/> Username <sup>*</sup> <br/>
+                        <h7>Choose a username which is similar to your real name to make it easier for your clients to recognize who you are and reach</h7><br/>
+                        {{ form.username(placeholder="choose an unique username") }}
+                        <br/> Name <sup>*</sup><br/>
+                        {{ form.name(placeholder="name" ) }}
+                        <br/> Surname <sup>*</sup><br/>
+                        {{ form.surname(placeholder="surname" ) }}
+                        <br/> Email <sup>*</sup><br/>
+                        {{ form.email(placeholder="" ) }}
+                        <br/>Where are you from?<br/>
+                        {{ form.province(placeholder="", id="searchTextField" )}}
+                        <br/>Are you a professional guide? <br/>
+                        <h7>Please note, we will conduct spot check to ensure the statement reflect the reality</h7><br/>
+                        {{ form.professional() }}
+                        <br/>Tell us something about you!<sup>*</sup><br/>
+                        {{ form.bio(placeholder="What do you like? Why would anyone choose you? Tell us about your experiences, your knowledge and whatever you find useful!", style="width:50%; border-radius: 10px;height:8rem" ) }}
+                        <br/>Phone Number<br/>
+                        <h7>We will not show your phone number to our users but it could be used by us to contact you</h7><br/>
+                        {{ form.phone(placeholder="")}}
+                        <br/> What languages do you speak? <sup>*</sup><br/>
+                        {{ form.language()}}
+                        <br/> Password <sup>*</sup><br/>
+                    <h8>min 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 symbol</h8><br/>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                            {% if category=="passworderror" %}
+                                <div style="color:orange">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                        {{ form.password(placeholder="" )}}
+                        <br/> Confirm Password <sup>*</sup><br/>
+                        {{ form.confirm(placeholder="" )}}
+                        <br/><br/>
+                        <span style="align: center">Choose a profile picture <sup>*</sup><br/>
+                            <h7>a good photo can help you show your reliability, choose wisely!</h7><br/>
+                        {{ form.profilepicture(placeholder="") }}<br/></span>
+                        <br/> By clicking here, I state that I have read and understood the terms and conditions. <br/>
+                        <br/> {{ form.submit(class="btn btn-primary btn-lg align-content-center") }}
+                        {{ form.hidden_tag() }}
+                    </form>
+                    <br/><br/>
+                 {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      <ul class="flashes">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                {% endwith %}
+                </div>
+            </div>
+            </div>
+        <br/>
+    </header>
+{% endblock %}
+

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}
+Login
+{% endblock %}
+{% block body %}
+     <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category=="accessprofile" %}
+                                        <span style="color:white">{{ message }}</span><br/>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                <div class="d-flex justify-content-center">
+                    <div class="left-rectangle">
+                    <br/>
+                    <h3>Welcome back hiker!</h3>
+                     <form method="POST">
+                         {{ form.csrf_token }}
+                         {{ form.email.label }}<br/>{{ form.email(class="align-content-end") }}<br/>
+                         {{ form.password.label }}<br/>{{ form.password(class="align-content-end") }}<br/><br/>
+                         {{ form.remember.label }}?<br/>{{ form.remember() }}<br/>
+                         {{ form.submit(class="btn btn-primary btn-lg align-content-center") }}
+                         {{ form.hidden_tag() }}
+                      </form>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category=="error" %}
+                                    <span class="{{ category }}">{{ message }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="right-rectangle">
+                        <br/>
+                        <h4 style="color:grey">Aren't you signed up yet? Register <a href="{{ url_for('signup') }}"> here!</a><br/></h4><h7>Or <a href="{{ url_for('signup4guides') }}">here</a> if you are a guide ;)</h7>
+                        <img src="{{ url_for('static', filename=('assets/img/mountain.jpg'))}}" style="width: 70%; border-radius:5%"/>
+                    </div>
+                 </div>
+            </div>
+     </header>
+    <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Are you a guide?</h2>
+                        <p class="text-white-50">
+                            Explore how to improve your business.
+                            <a href="{{ url_for('signup4guides')}}">Click here to sign up!</a>
+                        </p>
+                    </div>
+                </div>
+                <img class="img-thumbnail" src="../static/assets/img/hiking2.jpg" alt="..." />
+            </div>
+    </section>
+{% endblock %}

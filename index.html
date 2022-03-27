@@ -1,0 +1,149 @@
+    {% extends "base.html" %}
+        {% block title %}Home{% endblock %}
+
+        {% block body %}
+            <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex">
+                    <div class="text-center">
+                        <img src="static/assets/img/white.png" style="margin-top:4rem; height:550px" class="mb-1"/>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-3">The new, authentic way to explore nature, hiking and meeting new people</h2>
+                            <form method="post" enctype='multipart/form-data'>
+                                {{ form.csrf_token }}
+                                {{ form.province(class="navbar-form firstnavbar col-lg-6 w-60", id="province" ) }}
+                                {{ form.submit(class="btn btn-primary btn-lg mt-2", placeholder="Search your new adventure!") }}
+                                {{ form.hidden_tag() }}
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- About-->
+        <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                    {% if current_user.is_authenticated %}
+                        <h2 class="text-white mb-4">Hi, {{ personalData.name+" "+personalData.surname }}</h2>
+                        <p class="text-white-50">
+                            FantastHike! is a new platform that allows tourists but also local people to meet professional and non-professional
+                            hiking guides. You can search the province in which you are or you will be in and discover hundreds of possible experiences.
+                            What are you waiting for? Start Hiking!
+                        </p>
+                    {% else %}
+                        <h2 class="text-white mb-4">Hello!</h2>
+                        <p class="text-white-50">
+                            FantastHike! is a new platform that allows tourists but also local people to meet professional and non-professional
+                            hiking guides. You can search the province in which you are or you will be and discover hundreds of possible experiences.
+                            What are you waiting for? Start Hiking!
+                        </p>
+                    {% endif %}
+                        <h4 class="text-white" id="usersearch">One of your friends is already hiking?</h4>
+                        <h6 class="text-white-50">Search them by inserting their username here!</h6>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            {% if category=="usernameError" %}
+                                <div style="color:orange">{{ message }}</div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                            <form method="post" enctype='multipart/form-data'>
+                                {{ formuser.csrf_token }}
+                                    {{ formuser.username(class="navbar-form firstnavbar col-lg-6 w-60") }}
+                                    {{ formuser.submit(class="btn btn-primary btn-lg mt-2", placeholder="Search") }}
+                                {{ formuser.hidden_tag() }}
+                            </form><br/>
+                        <img class="img-thumbnail" src="../static/assets/img/hiking2.jpg" alt="..." /><br/><br/>
+                    </div>
+                </div>
+            </div>
+                            {% if exp_number >= 3 %}
+                            <div class="container px-3 px-lg-5">
+                                <div class="row gx-4 gx-lg-5">
+                                    <h2 class="text-white mb-4">Discover the latest experiences added!</h2>
+                                    {% for e in exp_suggestion %}
+                                            <a class="profilecard2" href="{{ url_for('profile',username=e.user.username) }}#{{ e.id }}">
+                                                <img src="../static/assets/profilephoto/{{ e.user.id }}/{{ e.user.id }}.jpg" class="profilephotoround2">
+                                                <h5>{{ e.user.name+" "+e.user.surname }}</h5>
+                                                <h6>{{ e.title }}</h6>
+                                                <h5 style="font-style: italic">{{ e.place }}, {{ e.provinceExp }}</h5>
+                                            </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+            </div>
+        </section>
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+                <!-- Featured Project Row-->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <div class="col-xl-4 col-lg-5"><img class="img-fluid mb-3 mb-lg-0" src="../static/assets/img/hiking5.jpg" alt="..." /></div>
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="featured-text text-center text-lg-left">
+                            <h4>Easy</h4>
+                            <p class="text-black-50 mb-0">
+                                There is no need to have climbed mount Everest to start
+                                enjoying the benefits of physical activity and open air. With our platform, you can find
+                                some of the best guides (or maybe the best ;) ) around here. It does not matter if you have
+                                child or you are thinking "I'm too old for this", contact the guide and we are sure
+                                they will create the alternative that suits you better.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project One Row-->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="../static/assets/img/hiking4.jpg" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Safe</h4>
+                                    <p class="mb-0 text-white-50">Guides are here to ensure the safest experience for you and your friends</p>
+                                    <hr class="d-none d-lg-block mb-0 ms-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="../static/assets/img/hiking3.jpg" alt="..." /></div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white">Suitable for every need</h4>
+                                    <p class="mb-0 text-white-50">
+                                        We provide with the guides' e-mail, you can speak directly with them and plan the perfect experience designed around you,
+                                        even if you want to disconnect from the world for more
+                                        than one day.<br/>Or forever, who knows?
+                                    </p>
+                                    <hr class="d-none d-lg-block mb-0 me-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Signup-->
+        {% if not session["username"] %}
+        <section class="signup-section" id="signup">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-10 col-lg-8 mx-auto text-center">
+                        <i class="far fa-paper-plane fa-2x mb-2 text-white"></i>
+                        <h2 class="text-white mb-5">Subscribe and start exploring!</h2>
+                        <a class="btn btn-primary" href="{{ url_for('signup') }}">Click here!</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+        {% endblock %}

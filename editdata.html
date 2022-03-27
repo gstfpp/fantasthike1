@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}
+EditData
+{% endblock %}
+
+{% block body %}
+    <header class="mastheadlong">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="bigrectangle">
+                    <br/>
+                    <h3>Edit your data, fill only data you want to change!</h3><br/>
+                    <h8>Please note that for changing important datas such as email and username you can contact us at help@fantasthike.com </h8><br/>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                        <span>{{ message }}</span><br/>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    <form method="post" enctype='multipart/form-data'>
+                        {{ form.csrf_token }}
+                        <br/> Name<br/>
+                        {{ form.name(placeholder="name" ) }}
+                        <br/> Surname<br/>
+                        {{ form.surname(placeholder="surname" ) }}
+                        <br/>Update your bio<br/>
+                        {{ form.bio(placeholder="What do you like? What do you search here? Tell us about your experiences, we can't wait to here them!", style="width:50%; border-radius: 10px;height:8rem" ) }}
+                        <br/> Phone Number<br/>
+                        {{ form.phone(placeholder="")}}
+                        <br/> Did you learn new languages?<br/>
+                        {{ form.language()}}
+                        {% if user.guide == 1 %}
+                        {% if user.professional == 0 %}
+                        <br/> Are you a professional guide now?<br/>
+                        {{ form.professional() }}
+                        {% endif %}
+                        <br/> Do you want to become a premium guide? Premium guides only pay 4$ per month and their experiences are always on the top of the search page. This means you will have much more contacts!<br/>
+                        {{ form.premium() }}
+                        {% endif %}
+                        <br/> Password <br/>
+                        {{ form.password(placeholder="" )}}
+                        <br/> Confirm Password<br/>
+                        {{ form.confirm(placeholder="" )}}
+                        <br/> Province<br/>
+                        {{ form.province(placeholder="", id="searchTextField" )}}
+                        <br/><br/>
+                        <span style="align: center">Choose a profile picture:
+                        {{ form.profilepicture(placeholder="") }}<br/></span>
+                        <br/> {{ form.submit(class="btn btn-primary btn-lg align-content-center") }}
+                        {{ form.hidden_tag() }}
+                    </form>
+                    <br/><br/>
+                </div>
+            </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      <ul class="flashes">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        <br/>
+    </header>
+{% endblock %}
